@@ -17,11 +17,12 @@ namespace HackclubArcadeAPIWrapper.Models
 
         public JObject Data { get; private set; }
 
-        private GenericArcadeResponse(JObject json, bool ok, JObject data)
+        private GenericArcadeResponse(JObject json, bool ok, JObject? data)
         {
             this.Json = json;
             this.OK = ok;
-            this.Data = data;
+
+            this.Data = data!;
         }
 
         public static GenericArcadeResponse? FromJSON(string jsonstring)
@@ -47,6 +48,7 @@ namespace HackclubArcadeAPIWrapper.Models
         public T GetData<T>() where T : new()
         {
             T? data = Data.ToObject<T>();
+            if(data == null) throw new ArcadeHTTPException("Failed to parse response from Arcade API");
             return data;
         }
     }
