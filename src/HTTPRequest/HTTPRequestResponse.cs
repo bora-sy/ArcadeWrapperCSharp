@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HackclubArcadeAPIWrapper.HTTPRequest
 {
-    public class HTTPRequestResponse
+    internal class HTTPRequestResponse
     {
         public HttpResponseMessage? RawResponse { get; private set; }
 

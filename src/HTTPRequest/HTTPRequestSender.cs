@@ -10,7 +10,7 @@ namespace HackclubArcadeAPIWrapper.HTTPRequest
 {
 
 
-    public class HTTPRequestSender
+    internal class HTTPRequestSender
     {
         private string? _authorization;
 
@@ -20,13 +20,14 @@ namespace HackclubArcadeAPIWrapper.HTTPRequest
         }
 
 
-        public async Task<HTTPRequestResponse> GET(string url, bool useAuthorization = true)
+        public async Task<HTTPRequestResponse> SendAsync(string url, HttpMethod method, string? JSONBody = null, bool useAuthorization = true)
         {
             HttpClient client = new HttpClient();
+            HttpRequestMessage msg = new HttpRequestMessage(method, url);
 
             try
             {
-                HttpRequestMessage msg = new HttpRequestMessage(HttpMethod.Get, url);
+                if (JSONBody != null) msg.Content = new StringContent(JSONBody, Encoding.UTF8, "application/json");
 
                 if (useAuthorization && _authorization != null) msg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authorization);
 
@@ -42,21 +43,22 @@ namespace HackclubArcadeAPIWrapper.HTTPRequest
             finally
             {
                 if (client != null) client.Dispose();
+                if (msg != null) msg.Dispose();
             }
         }
 
-        public async Task<HTTPRequestResponse> POST(string url, string? JSONBody = null, bool useAuthorization = true)
+        public HTTPRequestResponse Send(string url, HttpMethod method, string? JSONBody = null, bool useAuthorization = true)
         {
             HttpClient client = new HttpClient();
+            HttpRequestMessage msg = new HttpRequestMessage(method, url);
 
             try
             {
-                HttpContent? content = new StringContent(JSONBody ?? "{}", Encoding.UTF8, "application/json");
+                if (JSONBody != null) msg.Content = new StringContent(JSONBody, Encoding.UTF8, "application/json");
 
+                if (useAuthorization && _authorization != null) msg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _authorization);
 
-                if (useAuthorization && _authorization != null) content.Headers.Add("Authorization", $"Bearer {_authorization}");
-
-                HttpResponseMessage response = await client.PostAsync(url, content);
+                HttpResponseMessage response = client.Send(msg);
 
 
                 return new HTTPRequestResponse(true, response);
@@ -68,7 +70,28 @@ namespace HackclubArcadeAPIWrapper.HTTPRequest
             finally
             {
                 if (client != null) client.Dispose();
+                if (msg != null) msg.Dispose();
             }
+        }
+
+        public async Task<HTTPRequestResponse> GETAsync(string url, bool useAuthorization = true)
+        {
+            return await SendAsync(url, HttpMethod.Get, null, useAuthorization);
+        }
+
+        public HTTPRequestResponse GET(string url, bool useAuthorization = true)
+        {
+            return Send(url, HttpMethod.Get, null, useAuthorization);
+        }
+
+        public async Task<HTTPRequestResponse> POSTAsync(string url, string? JSONBody = null, bool useAuthorization = true)
+        {
+            return await SendAsync(url, HttpMethod.Post, JSONBody, useAuthorization);
+        }
+
+        public HTTPRequestResponse POST(string url, string? JSONBody = null, bool useAuthorization = true)
+        {
+            return Send(url, HttpMethod.Post, JSONBody, useAuthorization);
         }
     }
 }
