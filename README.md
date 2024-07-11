@@ -1,15 +1,15 @@
-# Hackclub Arcade API Wrapper
+# Hack Club Arcade API Wrapper
 
-[![NuGet](https://img.shields.io/nuget/v/PACKAGE-XXXX.svg?label=NuGet)](https://nuget.org/packages/PACKAGE-XXXX)
+[![NuGet](https://img.shields.io/nuget/v/HackClub.Arcade.svg?label=NuGet)](https://www.nuget.org/packages/HackClub.Arcade/1.0.0)
 
-This is a .NET library that provides a wrapper around the Hackclub Arcade API, allowing developers to easily interact with endpoints related to user sessions, statistics, goals, and history. Please note that this library is not officially maintained by Hackclub.
+This is a .NET library that provides a wrapper around the Hack Club Arcade API, allowing developers to easily interact with endpoints related to user sessions, statistics, goals, and history. Please note that this library is not officially maintained by Hack Club.
 
 ## Installation
 
 You can install the package via NuGet:
 
 ```bash
-dotnet add package Hackclub.Arcade.APIWrapper
+dotnet add package Hackclub.Arcade
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ dotnet add package Hackclub.Arcade.APIWrapper
 To get started, initialize an instance of `ArcadeWrapper` with your Hackclub Arcade API key:
 
 ```csharp
-using HackclubArcadeAPIWrapper;
+using HackClub.Arcade;
 
 // Initialize the wrapper with your API key
 var arcadeWrapper = new ArcadeWrapper("your-api-key");
