@@ -42,6 +42,7 @@ namespace HackclubArcadeAPIWrapper
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         private async Task<GenericArcadeResponse> GetArcadeResponseAsync(string url, HttpMethod method, string? JSONBody = null, bool asDataArray = false)
         {
             HTTPRequestResponse response = method == HttpMethod.Post ? await RequestSender.POSTAsync(url, JSONBody) : await RequestSender.GETAsync(url);
@@ -51,7 +52,16 @@ namespace HackclubArcadeAPIWrapper
             GenericArcadeResponse? arcadeResponse = GenericArcadeResponse.FromJSON(response.StringContent!, asDataArray);
 
             if (arcadeResponse == null) throw new ArcadeHTTPException("Failed to parse response from Arcade API");
-            if(response.StatusCode == HttpStatusCode.NotFound && !arcadeResponse.OK && arcadeResponse.Error == "User not found") throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+            if(!arcadeResponse.OK)
+            {
+                if(
+                    (response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
+                    (response.StatusCode == HttpStatusCode.Unauthorized)
+                  )
+                  throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+
+                if(arcadeResponse.Error!.ToLower().Contains("rate limit")) throw new ArcadeRateLimitException(arcadeResponse.Error);
+            }
             return arcadeResponse;
         }
 
@@ -64,22 +74,38 @@ namespace HackclubArcadeAPIWrapper
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         private GenericArcadeResponse GetArcadeResponse(string url, HttpMethod method, string? JSONBody = null, bool asDataArray = false)
         {
             HTTPRequestResponse response = method == HttpMethod.Post ? RequestSender.POST(url, JSONBody) : RequestSender.GET(url);
+
 
             if (!response.SendSuccess) throw new ArcadeHTTPException("Failed to get response from Arcade API");
 
             GenericArcadeResponse? arcadeResponse = GenericArcadeResponse.FromJSON(response.StringContent!, asDataArray);
 
             if (arcadeResponse == null) throw new ArcadeHTTPException("Failed to parse response from Arcade API");
-            if (response.StatusCode == HttpStatusCode.NotFound && !arcadeResponse.OK && arcadeResponse.Error == "User not found") throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+            if (!arcadeResponse.OK)
+            {
+                if (
+                    (response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
+                    (response.StatusCode == HttpStatusCode.Unauthorized)
+                  )
+                    throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+
+                if (arcadeResponse.Error!.ToLower().Contains("rate limit")) throw new ArcadeRateLimitException(arcadeResponse.Error);
+            }
             return arcadeResponse;
         }
 
         #endregion
 
         #region Ping
+        /// <summary>
+        /// Checks if the thing is alive.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
         public bool Ping()
         {
             var res = RequestSender.GET(Paths.Ping);
@@ -88,6 +114,11 @@ namespace HackclubArcadeAPIWrapper
             return res.StatusCode == HttpStatusCode.OK && res.StringContent == "pong";
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
         public async Task<bool> PingAsync()
         {
             var res = await RequestSender.GETAsync(Paths.Ping);
@@ -100,11 +131,12 @@ namespace HackclubArcadeAPIWrapper
         #region Get User Stats
 
         /// <summary>
-        /// 
+        /// Gets the stats for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeUserStats GetUserStats()
         {
             var resp = GetArcadeResponse(Paths.Stats, HttpMethod.Get);
@@ -113,11 +145,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Gets the stats for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeUserStats> GetUserStatsAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.Stats, HttpMethod.Get);
@@ -130,11 +163,12 @@ namespace HackclubArcadeAPIWrapper
         #region Get Latest Session
 
         /// <summary>
-        /// 
+        /// Gets the latest session for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeLatestSession GetLatestSession()
         {
             var resp = GetArcadeResponse(Paths.LatestSession, HttpMethod.Get);
@@ -143,11 +177,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Gets the latest session for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeLatestSession> GetLatestSessionAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.LatestSession, HttpMethod.Get);
@@ -159,11 +194,12 @@ namespace HackclubArcadeAPIWrapper
 
         #region Get Goals
         /// <summary>
-        /// 
+        /// Gets the goals for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeGoal[] GetGoals()
         {
             var resp = GetArcadeResponse(Paths.Goals, HttpMethod.Get, null, true);
@@ -172,11 +208,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Gets the goals for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeGoal[]> GetGoalsAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.Goals, HttpMethod.Get, null, true);
@@ -188,11 +225,12 @@ namespace HackclubArcadeAPIWrapper
         #region Get Session History
 
         /// <summary>
-        /// 
+        /// Gets the session history for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeHistorySession[] GetSessionHistory()
         {
             var resp = GetArcadeResponse(Paths.History, HttpMethod.Get, null, true);
@@ -202,11 +240,12 @@ namespace HackclubArcadeAPIWrapper
 
 
         /// <summary>
-        /// 
+        /// Gets the session history for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeHistorySession[]> GetSessionHistoryAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.History, HttpMethod.Get, null, true);
@@ -218,7 +257,7 @@ namespace HackclubArcadeAPIWrapper
         #region Start Session
 
         /// <summary>
-        /// 
+        /// Starts a new session for the user.
         /// </summary>
         /// <param name="work"></param>
         /// <returns></returns>
@@ -226,6 +265,7 @@ namespace HackclubArcadeAPIWrapper
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
         /// <exception cref="ArcadeSessionException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeStartResult StartSession(string work)
         {
             if (work == null) throw new ArgumentNullException(nameof(work));
@@ -238,7 +278,7 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Starts a new session for the user.
         /// </summary>
         /// <param name="work"></param>
         /// <returns></returns>
@@ -246,6 +286,7 @@ namespace HackclubArcadeAPIWrapper
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
         /// <exception cref="ArcadeSessionException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeStartResult> StartSessionAsync(string work)
         {
             if (work == null) throw new ArgumentNullException(nameof(work));
@@ -262,12 +303,13 @@ namespace HackclubArcadeAPIWrapper
         #region Pause Session
 
         /// <summary>
-        /// 
+        /// Pauses or resumes the current session for the user, depending on the current state.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
         /// <exception cref="ArcadeSessionException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadePauseResult PauseSession()
         {
             var resp = GetArcadeResponse(Paths.SessionPause, HttpMethod.Post);
@@ -277,12 +319,13 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Pauses or resumes the current session for the user, depending on the current state.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
         /// <exception cref="ArcadeSessionException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadePauseResult> PauseSessionAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.SessionPause, HttpMethod.Post);
@@ -296,11 +339,12 @@ namespace HackclubArcadeAPIWrapper
         #region Cancel Session
 
         /// <summary>
-        /// 
+        /// Cancels the current session for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public ArcadeCancelResult CancelSession()
         {
             var resp = GetArcadeResponse(Paths.SessionCancel, HttpMethod.Post);
@@ -309,11 +353,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Cancels the current session for the user.
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArcadeHTTPException"></exception>
         /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <exception cref="ArcadeRateLimitException"></exception>
         public async Task<ArcadeCancelResult> CancelSessionAsync()
         {
 
