@@ -17,6 +17,12 @@ namespace HackClub.Arcade.Models
         public string? SlackID { get; private set; }
 
         /// <summary>
+        /// The work associated with the session.
+        /// </summary>
+        [JsonProperty("work")]
+        public string? Work { get; private set; }
+
+        /// <summary>
         /// The date and time when the session was created.
         /// </summary>
         [JsonProperty("createdAt")]
