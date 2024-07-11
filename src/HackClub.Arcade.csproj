@@ -7,7 +7,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Title>Hack Club Arcade API Wrapper</Title>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Authors>BoRaSY</Authors>
     <Description>This is a .NET library that provides a wrapper around the Hack Club Arcade API, allowing developers to easily interact with endpoints related to user sessions, statistics, goals, and history.</Description>
     <RepositoryUrl>https://github.com/bora-sy/ArcadeWrapperCSharp</RepositoryUrl>
