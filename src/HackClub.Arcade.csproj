@@ -7,13 +7,14 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
     <Title>Hack Club Arcade API Wrapper</Title>
-    <Version>1.0.0</Version>
+    <Version>1.0.2</Version>
     <Authors>BoRaSY</Authors>
     <Description>This is a .NET library that provides a wrapper around the Hack Club Arcade API, allowing developers to easily interact with endpoints related to user sessions, statistics, goals, and history.</Description>
     <RepositoryUrl>https://github.com/bora-sy/ArcadeWrapperCSharp</RepositoryUrl>
     <PackageTags>hack club; arcade; hack club arcade; hack-hour;</PackageTags>
     <PackageProjectUrl>https://github.com/bora-sy/ArcadeWrapperCSharp</PackageProjectUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageReleaseNotes>Fixed the ping function</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

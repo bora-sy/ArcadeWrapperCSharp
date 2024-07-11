@@ -10,7 +10,7 @@ namespace HackClub.Arcade.HTTPRequest
     {
         public const string BASE_URL = "https://hackhour.hackclub.com";
 
-        public const string Ping = BASE_URL + "/api/ping";
+        public const string Ping = BASE_URL + "/ping";
 
         public const string LatestSession = BASE_URL + "/api/session/a";
 
