@@ -232,12 +232,12 @@ namespace HackclubArcadeAPIWrapper
         #region Get Session History
 
         /// <summary>
-        /// Gets the session history for the user.
+        /// Retrieves the session history entries for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>An array of session history entries.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeHistorySession[] GetSessionHistory()
         {
             var resp = GetArcadeResponse(Paths.History, HttpMethod.Get, null, true);
@@ -245,55 +245,55 @@ namespace HackclubArcadeAPIWrapper
             return resp.GetData<List<ArcadeHistorySession>>(true).ToArray();
         }
 
-
         /// <summary>
-        /// Gets the session history for the user.
+        /// Asynchronously retrieves the session history entries for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>An array of session history entries.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeHistorySession[]> GetSessionHistoryAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.History, HttpMethod.Get, null, true);
 
             return resp.GetData<List<ArcadeHistorySession>>(true).ToArray();
         }
+
         #endregion
 
         #region Start Session
 
         /// <summary>
-        /// Starts a new session for the user.
+        /// Starts a new session for the user with the specified work.
         /// </summary>
-        /// <param name="work"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeSessionException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <param name="work">The work or task description for the session.</param>
+        /// <returns>The result of starting the session.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="work"/> is null.</exception>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeSessionException">Thrown when there is an issue with the session operation.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeStartResult StartSession(string work)
         {
             if (work == null) throw new ArgumentNullException(nameof(work));
 
             var resp = GetArcadeResponse(Paths.SessionStart, HttpMethod.Post, $"{{\"work\":\"{work}\"}}");
 
-            if(!resp.OK) throw new ArcadeSessionException(resp.Error!);
+            if (!resp.OK) throw new ArcadeSessionException(resp.Error!);
 
             return resp.GetData<ArcadeStartResult>();
         }
 
         /// <summary>
-        /// Starts a new session for the user.
+        /// Asynchronously starts a new session for the user with the specified work.
         /// </summary>
-        /// <param name="work"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeSessionException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <param name="work">The work or task description for the session.</param>
+        /// <returns>The result of starting the session.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="work"/> is null.</exception>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeSessionException">Thrown when there is an issue with the session operation.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeStartResult> StartSessionAsync(string work)
         {
             if (work == null) throw new ArgumentNullException(nameof(work));
@@ -312,11 +312,11 @@ namespace HackclubArcadeAPIWrapper
         /// <summary>
         /// Pauses or resumes the current session for the user, depending on the current state.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeSessionException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>The result of pausing or resuming the session.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeSessionException">Thrown when there is an issue with the session operation.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadePauseResult PauseSession()
         {
             var resp = GetArcadeResponse(Paths.SessionPause, HttpMethod.Post);
@@ -326,13 +326,13 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// Pauses or resumes the current session for the user, depending on the current state.
+        /// Asynchronously pauses or resumes the current session for the user, depending on the current state.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeSessionException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>The result of pausing or resuming the session.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeSessionException">Thrown when there is an issue with the session operation.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadePauseResult> PauseSessionAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.SessionPause, HttpMethod.Post);
@@ -348,10 +348,10 @@ namespace HackclubArcadeAPIWrapper
         /// <summary>
         /// Cancels the current session for the user.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>The result of canceling the session.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeCancelResult CancelSession()
         {
             var resp = GetArcadeResponse(Paths.SessionCancel, HttpMethod.Post);
@@ -360,21 +360,19 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// Cancels the current session for the user.
+        /// Asynchronously cancels the current session for the user.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>The result of canceling the session.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeCancelResult> CancelSessionAsync()
         {
-
             var resp = await GetArcadeResponseAsync(Paths.SessionCancel, HttpMethod.Post);
 
             return resp.GetData<ArcadeCancelResult>();
         }
 
         #endregion
-
     }
 }
