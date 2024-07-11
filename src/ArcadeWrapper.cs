@@ -2,47 +2,48 @@
 using HackclubArcadeAPIWrapper.HTTPRequest;
 using HackclubArcadeAPIWrapper.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HackclubArcadeAPIWrapper
 {
+    /// <summary>
+    /// Provides methods to interact with the Hackclub Arcade API for managing user sessions, statistics, goals, and history.
+    /// </summary>
     public class ArcadeWrapper
     {
         private string? ArcadeAPIKey;
         private HTTPRequestSender RequestSender;
 
-
         /// <summary>
-        /// 
+        /// Initializes a new instance of the ArcadeWrapper class with the specified Arcade API key.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
+        /// <param name="arcadeAPIKey">The API key for accessing the Arcade API.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="arcadeAPIKey"/> is null.</exception>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
         public ArcadeWrapper(string arcadeAPIKey)
         {
-            if(arcadeAPIKey == null) throw new ArgumentNullException(nameof(arcadeAPIKey));
+            if (arcadeAPIKey == null) throw new ArgumentNullException(nameof(arcadeAPIKey));
             ArcadeAPIKey = arcadeAPIKey;
             RequestSender = new HTTPRequestSender(ArcadeAPIKey);
 
-            _ = GetUserStats();
+            _ = GetUserStats(); // Pre-fetch user stats upon initialization
         }
 
         #region Arcade Requests
 
         /// <summary>
-        /// 
+        /// Sends an asynchronous request to the Arcade API and returns the response.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="method"></param>
-        /// <param name="JSONBody"></param>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <param name="url">The URL for the API endpoint.</param>
+        /// <param name="method">The HTTP method (GET or POST).</param>
+        /// <param name="JSONBody">Optional JSON body for POST requests.</param>
+        /// <param name="asDataArray">Specifies if the response data should be parsed as an array.</param>
+        /// <returns>The response from the Arcade API.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         private async Task<GenericArcadeResponse> GetArcadeResponseAsync(string url, HttpMethod method, string? JSONBody = null, bool asDataArray = false)
         {
             HTTPRequestResponse response = method == HttpMethod.Post ? await RequestSender.POSTAsync(url, JSONBody) : await RequestSender.GETAsync(url);
@@ -52,33 +53,34 @@ namespace HackclubArcadeAPIWrapper
             GenericArcadeResponse? arcadeResponse = GenericArcadeResponse.FromJSON(response.StringContent!, asDataArray);
 
             if (arcadeResponse == null) throw new ArcadeHTTPException("Failed to parse response from Arcade API");
-            if(!arcadeResponse.OK)
+            if (!arcadeResponse.OK)
             {
-                if(
-                    (response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
-                    (response.StatusCode == HttpStatusCode.Unauthorized)
-                  )
-                  throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+                if ((response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
+                    (response.StatusCode == HttpStatusCode.Unauthorized))
+                {
+                    throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+                }
 
-                if(arcadeResponse.Error!.ToLower().Contains("rate limit")) throw new ArcadeRateLimitException(arcadeResponse.Error);
+                if (arcadeResponse.Error!.ToLower().Contains("rate limit")) throw new ArcadeRateLimitException(arcadeResponse.Error);
             }
+
             return arcadeResponse;
         }
 
         /// <summary>
-        /// 
+        /// Sends a synchronous request to the Arcade API and returns the response.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="method"></param>
-        /// <param name="JSONBody"></param>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <param name="url">The URL for the API endpoint.</param>
+        /// <param name="method">The HTTP method (GET or POST).</param>
+        /// <param name="JSONBody">Optional JSON body for POST requests.</param>
+        /// <param name="asDataArray">Specifies if the response data should be parsed as an array.</param>
+        /// <returns>The response from the Arcade API.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         private GenericArcadeResponse GetArcadeResponse(string url, HttpMethod method, string? JSONBody = null, bool asDataArray = false)
         {
             HTTPRequestResponse response = method == HttpMethod.Post ? RequestSender.POST(url, JSONBody) : RequestSender.GET(url);
-
 
             if (!response.SendSuccess) throw new ArcadeHTTPException("Failed to get response from Arcade API");
 
@@ -87,25 +89,27 @@ namespace HackclubArcadeAPIWrapper
             if (arcadeResponse == null) throw new ArcadeHTTPException("Failed to parse response from Arcade API");
             if (!arcadeResponse.OK)
             {
-                if (
-                    (response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
-                    (response.StatusCode == HttpStatusCode.Unauthorized)
-                  )
+                if ((response.StatusCode == HttpStatusCode.NotFound && arcadeResponse.Error == "User not found") ||
+                    (response.StatusCode == HttpStatusCode.Unauthorized))
+                {
                     throw new ArcadeUnauthorizedException(ArcadeAPIKey);
+                }
 
                 if (arcadeResponse.Error!.ToLower().Contains("rate limit")) throw new ArcadeRateLimitException(arcadeResponse.Error);
             }
+
             return arcadeResponse;
         }
 
         #endregion
 
         #region Ping
+
         /// <summary>
-        /// Checks if the thing is alive.
+        /// Checks if the Arcade API server is reachable.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <returns>True if the server is reachable (returns "pong"), false otherwise.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
         public bool Ping()
         {
             var res = RequestSender.GET(Paths.Ping);
@@ -115,10 +119,10 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// 
+        /// Asynchronously checks if the Arcade API server is reachable.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <returns>True if the server is reachable (returns "pong"), false otherwise.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
         public async Task<bool> PingAsync()
         {
             var res = await RequestSender.GETAsync(Paths.Ping);
@@ -126,17 +130,18 @@ namespace HackclubArcadeAPIWrapper
 
             return res.StatusCode == HttpStatusCode.OK && res.StringContent == "pong";
         }
+
         #endregion
 
         #region Get User Stats
 
         /// <summary>
-        /// Gets the stats for the user.
+        /// Retrieves statistics for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>User statistics.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeUserStats GetUserStats()
         {
             var resp = GetArcadeResponse(Paths.Stats, HttpMethod.Get);
@@ -145,12 +150,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// Gets the stats for the user.
+        /// Asynchronously retrieves statistics for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>User statistics.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeUserStats> GetUserStatsAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.Stats, HttpMethod.Get);
@@ -163,12 +168,12 @@ namespace HackclubArcadeAPIWrapper
         #region Get Latest Session
 
         /// <summary>
-        /// Gets the latest session for the user.
+        /// Retrieves the latest session information for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>Latest session information.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeLatestSession GetLatestSession()
         {
             var resp = GetArcadeResponse(Paths.LatestSession, HttpMethod.Get);
@@ -177,12 +182,12 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// Gets the latest session for the user.
+        /// Asynchronously retrieves the latest session information for the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>Latest session information.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeLatestSession> GetLatestSessionAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.LatestSession, HttpMethod.Get);
@@ -193,13 +198,14 @@ namespace HackclubArcadeAPIWrapper
         #endregion
 
         #region Get Goals
+
         /// <summary>
-        /// Gets the goals for the user.
+        /// Retrieves the goals associated with the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>An array of user goals.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public ArcadeGoal[] GetGoals()
         {
             var resp = GetArcadeResponse(Paths.Goals, HttpMethod.Get, null, true);
@@ -208,18 +214,19 @@ namespace HackclubArcadeAPIWrapper
         }
 
         /// <summary>
-        /// Gets the goals for the user.
+        /// Asynchronously retrieves the goals associated with the current user from the Arcade API.
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="ArcadeHTTPException"></exception>
-        /// <exception cref="ArcadeUnauthorizedException"></exception>
-        /// <exception cref="ArcadeRateLimitException"></exception>
+        /// <returns>An array of user goals.</returns>
+        /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
+        /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
+        /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
         public async Task<ArcadeGoal[]> GetGoalsAsync()
         {
             var resp = await GetArcadeResponseAsync(Paths.Goals, HttpMethod.Get, null, true);
 
             return resp.GetData<List<ArcadeGoal>>(true).ToArray();
         }
+
         #endregion
 
         #region Get Session History

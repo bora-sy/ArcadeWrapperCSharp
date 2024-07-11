@@ -10,9 +10,15 @@ namespace HackclubArcadeAPIWrapper.Models
 
     public class ArcadeGoal
     {
+        /// <summary>
+        /// Goal Name
+        /// </summary>
         [JsonProperty("name")]
         public string? Name { get; private set; }
 
+        /// <summary>
+        /// Goal Minutes
+        /// </summary>
         [JsonProperty("minutes")]
         public int Minutes { get; private set; }
     }
