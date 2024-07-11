@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace HackclubArcadeAPIWrapper.Models
 {
-    internal class ArcadeGoals
-    {
-        [JsonProperty("goals")]
-        public ArcadeGoal[]? Goals { get; private set; }
-    }
 
     public class ArcadeGoal
     {

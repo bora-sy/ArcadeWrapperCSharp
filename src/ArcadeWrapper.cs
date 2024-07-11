@@ -157,5 +157,63 @@ namespace HackclubArcadeAPIWrapper
 
         #endregion
 
+        #region Get Goals
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <exception cref="ArcadeUnauthorizedException"></exception>
+        public ArcadeGoal[] GetGoals()
+        {
+            var resp = GetArcadeResponse(Paths.Goals, HttpMethod.Get);
+
+            return resp.GetData<List<ArcadeGoal>>().ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <exception cref="ArcadeUnauthorizedException"></exception>
+        public async Task<ArcadeGoal[]> GetGoalsAsync()
+        {
+            var resp = await GetArcadeResponseAsync(Paths.Goals, HttpMethod.Get);
+
+            return resp.GetData<List<ArcadeGoal>>().ToArray();
+        }
+        #endregion
+
+        #region Get Session History
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <exception cref="ArcadeUnauthorizedException"></exception>
+        public ArcadeHistorySession[] GetSessionHistory()
+        {
+            var resp = GetArcadeResponse(Paths.History, HttpMethod.Get);
+
+            return resp.GetData<List<ArcadeHistorySession>>().ToArray();
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArcadeHTTPException"></exception>
+        /// <exception cref="ArcadeUnauthorizedException"></exception>
+        public async Task<ArcadeHistorySession[]> GetSessionHistoryAsync()
+        {
+            var resp = await GetArcadeResponseAsync(Paths.History, HttpMethod.Get);
+
+            return resp.GetData<List<ArcadeHistorySession>>().ToArray();
+        }
+        #endregion
+
     }
 }
