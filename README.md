@@ -9,7 +9,7 @@ This is a .NET library that provides a wrapper around the Hack Club Arcade API, 
 You can install the package via NuGet:
 
 ```bash
-dotnet add package Hackclub.Arcade
+dotnet add package HackClub.Arcade
 ```
 
 ## Usage
