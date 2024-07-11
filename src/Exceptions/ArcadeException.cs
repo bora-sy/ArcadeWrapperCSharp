@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HackclubArcadeAPIWrapper.Exceptions
+namespace HackClub.Arcade.Exceptions
 {
     public class ArcadeException : Exception
     {

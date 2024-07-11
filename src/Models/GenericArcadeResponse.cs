@@ -1,4 +1,4 @@
-﻿using HackclubArcadeAPIWrapper.Exceptions;
+﻿using HackClub.Arcade.Exceptions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HackclubArcadeAPIWrapper.Models
+namespace HackClub.Arcade.Models
 {
     internal class GenericArcadeResponse
     {

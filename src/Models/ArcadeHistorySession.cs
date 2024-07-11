@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HackclubArcadeAPIWrapper.Models
+namespace HackClub.Arcade.Models
 {
 
     public class ArcadeHistorySession

@@ -1,5 +1,5 @@
-﻿using HackclubArcadeAPIWrapper;
-using HackclubArcadeAPIWrapper.HTTPRequest;
+﻿using HackClub.Arcade;
+using HackClub.Arcade.HTTPRequest;
 
 namespace TestApp
 {

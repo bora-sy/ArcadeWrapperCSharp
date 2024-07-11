@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HackclubArcadeAPIWrapper.HTTPRequest
+namespace HackClub.Arcade.HTTPRequest
 {
     internal class HTTPRequestResponse
     {

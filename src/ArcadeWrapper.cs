@@ -1,11 +1,11 @@
-﻿using HackclubArcadeAPIWrapper.Exceptions;
-using HackclubArcadeAPIWrapper.HTTPRequest;
-using HackclubArcadeAPIWrapper.Models;
+﻿using HackClub.Arcade.Exceptions;
+using HackClub.Arcade.HTTPRequest;
+using HackClub.Arcade.Models;
 using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace HackclubArcadeAPIWrapper
+namespace HackClub.Arcade
 {
     /// <summary>
     /// Provides methods to interact with the Hackclub Arcade API for managing user sessions, statistics, goals, and history.
