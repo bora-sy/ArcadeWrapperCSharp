@@ -41,7 +41,7 @@ foreach (var session in sessionHistory)
     Console.WriteLine($"Session ID: {session.SessionId}, Duration: {session.Duration}");
 }
 ```
-For further guidance and examples, refer to the [Example Project](https://github.com/bora-sy/ArcadeWrapperCSharp/tree/main/Example).
+For further guidance and examples, refer to the [Example Projects](https://github.com/bora-sy/ArcadeWrapperCSharp/tree/main/Examples).
 
 ## Methods
 

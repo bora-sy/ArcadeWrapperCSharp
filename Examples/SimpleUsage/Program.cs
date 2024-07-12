@@ -1,6 +1,6 @@
 ﻿using HackClub.Arcade;
 
-namespace Example
+namespace SimpleUsage
 {
     internal class Program
     {
