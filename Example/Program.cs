@@ -6,7 +6,7 @@ namespace Example
     {
         static void Main(string[] args)
         {
-            string apiKey = "72c01e28-5c4c-4d40-857c-1fc2ce198b19";
+            string apiKey = "YOUR_API_KEY";
 
             ArcadeWrapper arcade = new ArcadeWrapper(apiKey);
 
