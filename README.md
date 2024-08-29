@@ -82,4 +82,4 @@ Cancels the current session for the user.
 
 <img src="https://github.com/user-attachments/assets/9c70aa6f-87ed-4584-bbb4-f795501579a3" width="500">
 
-*For the source code, refer to the [Sample Project](https://github.com/bora-sy/ArcadeWrapperCSharp/tree/main/Example/Sample).*
+*For the source code, refer to the [Simple Usage](https://github.com/bora-sy/ArcadeWrapperCSharp/tree/main/Examples/SimpleUsage).*
