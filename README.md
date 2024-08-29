@@ -1,6 +1,6 @@
 # Hack Club Arcade API Wrapper
 
-[![NuGet](https://img.shields.io/nuget/v/HackClub.Arcade.svg?label=NuGet)](https://www.nuget.org/packages/HackClub.Arcade/1.0.0)
+[![NuGet](https://img.shields.io/nuget/v/HackClub.Arcade.svg?label=NuGet)](https://www.nuget.org/packages/HackClub.Arcade/1.0.3)
 
 This is a .NET library that provides a wrapper around the Hack Club Arcade API, allowing developers to easily interact with endpoints related to user sessions, statistics, goals, and history. Please note that this library is not officially maintained by Hack Club.
 

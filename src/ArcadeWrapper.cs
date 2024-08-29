@@ -170,13 +170,14 @@ namespace HackClub.Arcade
         /// <summary>
         /// Retrieves the latest session information for the current user from the Arcade API.
         /// </summary>
+        /// <param name="slackMemberID">Slack Member ID of the User</param>
         /// <returns>Latest session information.</returns>
         /// <exception cref="ArcadeHTTPException">Thrown when there is an HTTP-related error while communicating with the Arcade API.</exception>
         /// <exception cref="ArcadeUnauthorizedException">Thrown when authentication with the Arcade API fails.</exception>
         /// <exception cref="ArcadeRateLimitException">Thrown when the rate limit for API requests is exceeded.</exception>
-        public ArcadeLatestSession GetLatestSession()
+        public ArcadeLatestSession GetLatestSession(string slackMemberID)
         {
-            var resp = GetArcadeResponse(Paths.LatestSession, HttpMethod.Get);
+            var resp = GetArcadeResponse(Paths.LatestSession + slackMemberID, HttpMethod.Get);
 
             return resp.GetData<ArcadeLatestSession>();
         }
