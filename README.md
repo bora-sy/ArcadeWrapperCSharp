@@ -76,3 +76,10 @@ Pauses or resumes the current session for the user.
 ### `CancelSession()` / `CancelSessionAsync()`
 
 Cancels the current session for the user.
+
+
+## Example Preview
+
+<img src="https://github.com/user-attachments/assets/9c70aa6f-87ed-4584-bbb4-f795501579a3" width="500">
+
+*For the source code, refer to the [Sample Project](https://github.com/bora-sy/ArcadeWrapperCSharp/tree/main/Example/Sample).*
